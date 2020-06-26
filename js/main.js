@@ -3,13 +3,11 @@
 //
 
 // mainChat is variable used throughout, set it equal to any of the string variables in /chats
-let mainChat = chatMolly
+let mainChat = chatJoe
 
 // Grapheme Splitter
 //https://www.npmjs.com/package/grapheme-splitter
 const splitter = new GraphemeSplitter();
-
-let emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g
 
 //
 //
@@ -17,7 +15,10 @@ let emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\u
 //
 //
 
-// Matches name format, e.g. "Niall Barber: "
+let emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g
+
+
+// Matches name format, e.g. "Niall Barber" or "Clare"
 const personRegExp = `[a-zA-Z\s]{1,}`
 const person = new RegExp(personRegExp, `g`)
 
@@ -44,6 +45,99 @@ let specialChars = /[ ’',()?!.,/:;&+=“”@*#%āäöšū>|£""-]/g
 
 // Descending sort
 // let sort = () => sortable.sort((a, b) =>  b[1] - a[1])
+
+//
+//
+// Swear words
+//
+//
+
+const swearWords = [
+  `arse`,
+  `ass`,
+  `hell`,
+  `bloody`,
+  `bladdy`,
+  `bugger`,
+  `crap`,
+  `crappy`,
+  `damn`,
+  `goddam`,
+  `goddamn`,
+  `god damn`,
+  `minger`,
+  `sod off`,
+  `arsehole`,
+  `bint`,
+  `bitch`,
+  `bollocks`,
+  `bullshit`,
+  `feck`,
+  `munter`,
+  `piss`,
+  `pissed`,
+  `shit`,
+  `shitting`,
+  `tits`,
+  `bastard`,
+  `beef curtains`,
+  `bellend`,
+  `clunge`,
+  `cock`,
+  `dick`,
+  `dickhead`,
+  `fanny`,
+  `gash`,
+  `knob`,
+  `minge`,
+  `prick`,
+  `prik`,
+  `punani`,
+  `pussy`,
+  `snatch`,
+  `twat`,
+  `cunt`,
+  `cunts`,
+  `fuck`,
+  `fuckup`,
+  `fucksake`,
+  `fucking`,
+  `fucked`,
+  `fuk`,
+  `fukin`,
+  `fukd`,
+  `fuked`,
+  `motherfucker`,
+  `heck`,
+  `hek`,
+  `heckin`,
+  `hekin`
+]
+
+// console.log(mainChat.split(` `).filter(c=> {
+//   if (swearWords.includes(c.toLowerCase())) {
+//     c = c.toLowerCase()
+//     return c
+//   }
+// }))
+
+const removeSpecialChars = input => input.replace(/[ ’',()?!.,/:;&+=“”@*#%āäöšū>|£""-]/g, ` `)
+
+const getSwearWords = chat => {
+  let swearChat = removeSpecialChars(chat).replace(/(\r\n|\n|\r)/g, ` `).split(` `)
+    .filter(c=> {
+      if (swearWords.includes(c.toLowerCase())) {
+        c = c.toLowerCase()
+        return c
+      }
+    }
+  )
+  swearChat = swearChat.map(c=>c.toLowerCase())
+    .reduce((a, e) => { a[e] = a[e] ? a[e] + 1 : 1; return a }, {})
+  return swearChat
+}
+
+console.log(getSwearWords(mainChat))
 
 
 const displayPersonEntries = input => {
@@ -95,7 +189,7 @@ result.map( c => {
   let str = c.emoji;
   let obj = {};
   for ( let s of str )if(!obj[s])obj[s] = 1;else obj[s] = obj[s]  + 1;
-  console.table(obj)
+  // console.table(obj)
   })
 
 // Lowercase, remove date/time, "media omitted", some special chars
@@ -109,9 +203,7 @@ const displayLongString = (input) => {
 
 let toLongString = chatMolly.toLowerCase().replace(dateTimePerson, ``)
 .replace(lineBreaks,` `)
-// .replace(/\(media omitted\)/g, ``)
 .replace(specialChars, ``)
-
 
 let entries = new Map(
   toLongString.split(` `)
@@ -119,14 +211,11 @@ let entries = new Map(
   .reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map()))
 
 const obj = Object.fromEntries(entries)
-// console.log(obj)
 
 let sortable = []
 for (let word in obj) {
     sortable.push([word, obj[word]])
 }
-
-// let output = sort(sortable)
 
 let emojiText = displayLongString(mainChat)
 
