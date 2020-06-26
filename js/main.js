@@ -1,10 +1,9 @@
-"use strict"
 //
 // Whatsapp Chat
 //
 
 // mainChat is variable used throughout, set it equal to any of the string variables in /chats
-let mainChat = chatSlurpy
+let mainChat = chatMolly
 
 // Grapheme Splitter
 //https://www.npmjs.com/package/grapheme-splitter
@@ -12,23 +11,28 @@ const splitter = new GraphemeSplitter();
 
 let emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g
 
-
+//
 //
 // Regex
 //
+//
 
 // Matches name format, e.g. "Niall Barber: "
-let personRegExp = `[a-zA-Z\s]{1,}: `
-let person = new RegExp(personRegExp, "g")
+const personRegExp = `[a-zA-Z\s]{1,}`
+const person = new RegExp(personRegExp, `g`)
 
+const dateRegExp = `[0-9]{2}[\/]{1}[0-9]{2}[\/]{1}[0-9]{4}`
+const date = new RegExp(dateRegExp, `g`)
+
+const timeRegExp = `[0-9]{2}:[0-9]{2}`
+const time = new RegExp(timeRegExp, `g`)
 
 // Matches Date, Time format
-let dateTimeRegExp = `[0-9]{2}[\/]{1}[0-9]{2}[\/]{1}[0-9]{4}, [0-9]{2}:[0-9]{2} - `
-let dateTime = new RegExp(dateTimeRegExp, "g")
+// let dateTimeRegExp = `${dateRegExp}, ${timeRegExp} - `
+let dateTimeRegExp = new RegExp(`${dateRegExp}, ${timeRegExp} - `, `g`)
 
 // Matches Whatsapp Date, Time, Person format
-let dateTimePerson = new RegExp(dateTimeRegExp + personRegExp, "g")
-
+let dateTimePerson = new RegExp(`${dateTimeRegExp} ${personRegExp}: `, `g`)
 
 // Matches all types of line break
 let lineBreaksRegExp = `(\r\n|\n|\r)`
@@ -42,10 +46,8 @@ let specialChars = /[ ’',()?!.,/:;&+=“”@*#%āäöšū>|£""-]/g
 // let sort = () => sortable.sort((a, b) =>  b[1] - a[1])
 
 
-
-
 const displayPersonEntries = input => {
-  let output = input.replace(dateTime, ``).split(lineBreaks)
+  let output = input.replace(dateTimeRegExp, ``).split(lineBreaks)
     .filter(c => !c.match(lineBreaks))
     .map(c => {
       let matchPerson = `${c.match(person)}`
@@ -63,6 +65,7 @@ const displayPersonEntries = input => {
     return output
   }
   let pushArr = []
+
   displayPersonEntries(mainChat).forEach(e => {
       e[1]===``?e:pushArr.push(e)
     }
@@ -86,13 +89,13 @@ theArr.forEach(a => {
         result.push(this[a.name]);
     }
     this[a.name].emoji += a.emoji;
-}, Object.create(null));
+}, Object.create(null))
 
 result.map( c => {
   let str = c.emoji;
-  let obj ={};
+  let obj = {};
   for ( let s of str )if(!obj[s])obj[s] = 1;else obj[s] = obj[s]  + 1;
-  console.log(obj)
+  console.table(obj)
   })
 
 // Lowercase, remove date/time, "media omitted", some special chars
