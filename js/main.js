@@ -3,7 +3,13 @@
 //
 
 // mainChat is variable used throughout, set it equal to any of the string variables in /chats
-let mainChat = chatJoe
+let mainChat = chatNiall
+
+// console.log(chatJoe)
+
+// if (chatJoe !== undefined) {
+//   let mainChat = chatJoe
+// }
 
 // Grapheme Splitter
 //https://www.npmjs.com/package/grapheme-splitter
@@ -16,7 +22,6 @@ const splitter = new GraphemeSplitter();
 //
 
 let emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g
-
 
 // Matches name format, e.g. "Niall Barber" or "Clare"
 const personRegExp = `[a-zA-Z\s]{1,}`
@@ -52,7 +57,7 @@ let specialChars = /[ ’',()?!.,/:;&+=“”@*#%āäöšū>|£""-]/g
 //
 //
 
-const swearWords = [
+const swearWordsArray = [
   `arse`,
   `ass`,
   `hell`,
@@ -114,31 +119,17 @@ const swearWords = [
   `hekin`
 ]
 
-// console.log(mainChat.split(` `).filter(c=> {
-//   if (swearWords.includes(c.toLowerCase())) {
-//     c = c.toLowerCase()
-//     return c
-//   }
-// }))
 
 const removeSpecialChars = input => input.replace(/[ ’',()?!.,/:;&+=“”@*#%āäöšū>|£""-]/g, ` `)
 
 const getSwearWords = chat => {
-  let swearChat = removeSpecialChars(chat).replace(/(\r\n|\n|\r)/g, ` `).split(` `)
-    .filter(c=> {
-      if (swearWords.includes(c.toLowerCase())) {
-        c = c.toLowerCase()
-        return c
-      }
-    }
-  )
-  swearChat = swearChat.map(c=>c.toLowerCase())
-    .reduce((a, e) => { a[e] = a[e] ? a[e] + 1 : 1; return a }, {})
-  return swearChat
+  return removeSpecialChars(chat).replace(/(\r\n|\n|\r)/g, ` `)
+    .split(` `)
+    .filter( c=> swearWordsArray.includes(c) )
+    .reduce( (a, e) => { a[e] = a[e] ? a[e] + 1 : 1; return a }, {})
 }
 
 console.log(getSwearWords(mainChat))
-
 
 const displayPersonEntries = input => {
   let output = input.replace(dateTimeRegExp, ``).split(lineBreaks)
@@ -189,8 +180,8 @@ result.map( c => {
   let str = c.emoji;
   let obj = {};
   for ( let s of str )if(!obj[s])obj[s] = 1;else obj[s] = obj[s]  + 1;
-  // console.table(obj)
-  })
+})
+// console.table(result)
 
 // Lowercase, remove date/time, "media omitted", some special chars
 const displayLongString = (input) => {

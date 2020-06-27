@@ -11,11 +11,7 @@ var plumber = require("gulp-plumber");
 
 gulp.task("concatScripts", function() {
   return gulp
-    .src([
-      "js/jquery.js",
-      "js/slick.min.js",
-      "js/cities.js",
-      "js/main.js"])
+    .src(["js/grapheme/index.js", "js/main.js"])
     .pipe(plumber())
     .pipe(maps.init())
     .pipe(concat("app.js"))
@@ -38,7 +34,7 @@ gulp.task("compileSass", function() {
     .pipe(maps.init())
     .pipe(sass())
     .pipe(maps.write("./"))
-    .pipe(gulp.dest("./css"));
+    .pipe(gulp.dest("./dist/css"));
 });
 
 gulp.task("watchFiles", function() {
